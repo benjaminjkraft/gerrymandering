@@ -1,9 +1,24 @@
+# Usage:
+# dump_data(metric, filename)
+# where metric is one of:
+#  * adjusted_moment_centroid
+#  * area_per
+# and more to come, and filename is the base of the filename of the shapefile
+# (without the .shp/.dbf)
+#
+# TODO:
+#  * clip to coastlines
+#  * figure out if there's a sane thing to do with perimeter with
+#    non-contractible shapes
+#  * run on past and state data
+#  * include population data, to compute population moments
+
 import csv
 import functools
 import math
 import shapefile
 
-def get_states(filename='state.txt'):
+def get_states(filename='data/state.txt'):
     """Returns a dict of FIPS codes to postal abbreviations."""
     with open(filename) as f:
         dialect = csv.Sniffer().sniff(f.read())
@@ -13,7 +28,7 @@ def get_states(filename='state.txt'):
         return {state[0]: state[1] for state in reader}
 
 
-def metric(function, use_first_part=False):
+def metric(function):
     """Decorator to make a function on pairs of points a function on shapes.
 
     function should take two points (each lists of length 2) and return some
@@ -32,11 +47,8 @@ def metric(function, use_first_part=False):
         # just want to add up over all of them; perimeter is a bit wonky, so as
         # an approximation we simply ignore the removed bits.
         part_ends = shape.parts.tolist() + [len(shape.points)]
-        if use_first_part:
-            pointss = [shape.points[:part_ends[1]]]
-        else:
-            pointss = [shape.points[part_ends[i]:part_ends[i+1]]
-                       for i in range(len(shape.parts))]
+        pointss = [shape.points[part_ends[i]:part_ends[i+1]]
+                   for i in range(len(shape.parts))]
         total = 0
         for points in pointss:
             # Note: points will actually start and end with the same point, but
@@ -50,10 +62,10 @@ def metric(function, use_first_part=False):
     return wrapped
 
 
+@metric
 def perimeter(prev, nxt):
     """Counts only the perimeter of the "outer" polygon, not any removed parts."""
     return math.sqrt((prev[0] - nxt[0]) ** 2 + (prev[1] - nxt[1]) ** 2)
-perimeter = metric(perimeter, use_first_part=True)
 
 def area_piece(prev, nxt):
     return nxt[0] * prev[1] - prev[0] * nxt[1]
