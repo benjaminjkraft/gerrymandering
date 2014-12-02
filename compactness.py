@@ -120,6 +120,7 @@ def dump_data(metric, filebase='data/cb_2013_us_cd113_500k',
     districts = sf.shapeRecords()
     states = get_states(states_filename)
     try:
+        # data = [(dist.record[5], metric(dist.shape)) for dist in districts]
         data = [(states[dist.record[0]], dist.record[1], metric(dist.shape))
                 for dist in districts]
     except:
