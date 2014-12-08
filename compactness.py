@@ -20,6 +20,7 @@ import math
 import shapefile
 from pyhull.convex_hull import ConvexHull
 import os
+import re
 
 def get_states(filename='data/state.txt'):
     """Returns a dict of FIPS codes to postal abbreviations."""
@@ -160,6 +161,17 @@ def dump_data(metric, filebase='data/tl_2014_us_cd114',
     with open(out_filename, 'w') as f:
         writer = csv.writer(f)
         writer.writerows(data)
+
+def dump_multiple_data(metric, indirectory='/tmp/faces/', outdirectory='data/',
+                       file_regex=r'^tl_2014_\d\d_sld[ul]\.shp$',
+                       states_filename='data/state.txt'):
+    regex = re.compile(file_regex)
+    maybe_files = os.listdir(indirectory)
+    for f in maybe_files:
+        if regex.match(f):
+            dump_data(metric, indirectory + f[:-4], states_filename,
+                      '%s%s_%s.csv' % (outdirectory, f.split('.')[0],
+                                       metric.func_name))
 
 def block_map(state_fips, directory='/tmp/faces/'):
     all_files = os.listdir(directory)
