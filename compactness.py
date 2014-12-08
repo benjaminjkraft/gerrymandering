@@ -17,6 +17,7 @@ import csv
 import functools
 import math
 import shapefile
+from pyhull.convex_hull import ConvexHull
 
 def get_states(filename='data/state.txt'):
     """Returns a dict of FIPS codes to postal abbreviations."""
@@ -61,6 +62,28 @@ def metric(function):
         return total
     return wrapped
 
+def whole_shape_metric(function):
+    """Decorator to make a function on a list of points a function on shapes.
+
+    function should take a list of points (each lists of length 2) and return some
+    number.
+
+    Returns a function that takes a shape.  Intended to be used as a decorator.
+    """
+    @functools.wraps(function)
+    def wrapped(shape):
+        assert shape.shapeType == 5
+        # Shapes consist of one or more parts, which begin at the positions
+        # given in shape.parts.  The first part is the "outer" polygon, given
+        # in clockwise order, and the latter parts are given in
+        # counterclockwise order, and subtracted.  For the metrics using
+        # this, I really only care about the outer part.
+        part_ends = shape.parts.tolist() + [len(shape.points)]
+        pointss = [shape.points[part_ends[i]:part_ends[i+1]]
+                   for i in range(len(shape.parts))]
+        total = function(pointss[0])
+        return total
+    return wrapped
 
 @metric
 def perimeter(prev, nxt):
