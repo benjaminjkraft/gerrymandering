@@ -83,7 +83,7 @@ def whole_shape_metric(function):
         part_ends = shape.parts.tolist() + [len(shape.points)]
         pointss = [shape.points[part_ends[i]:part_ends[i+1]]
                    for i in range(len(shape.parts))]
-        total = function(pointss[0])
+        total = function(pointss)
         return total
     return wrapped
 
@@ -98,6 +98,9 @@ def area_piece(prev, nxt):
 @metric
 def area(prev, nxt):
     """Area of a polygon with points in clockwise order."""
+    return area_piece(prev, nxt) / 2
+
+def area_pt(prev, nxt):
     return area_piece(prev, nxt) / 2
 
 def area_per(points):
@@ -131,7 +134,7 @@ def adjusted_moment_centroid(points):
     """NGCH's Dis_11, divided by sqrt(pi) to normalize it to be on [0,1]."""
     return area(points)/math.sqrt(2 * math.pi * moment_centroid(points))
 
-def dump_data(metric, filebase='data/cb_2013_us_cd113_500k',
+def dump_data(metric, filebase='data/tl_2014_us_cd114',
               states_filename='data/state.txt', out_filename=None):
     """Dumps a csv of state,district,metric.
     
@@ -150,6 +153,7 @@ def dump_data(metric, filebase='data/cb_2013_us_cd113_500k',
                 for dist in districts]
     except:
         print dist.record
+        raise
     data.sort()
     if out_filename is None:
         out_filename = filebase + '_' + metric.func_name + '.csv'
@@ -180,6 +184,9 @@ def block_map(state_fips, directory='/tmp/faces/'):
         cd = district_options.most_common(1)[0][0]
         cd_map[cd].append(block_code)
     return cd_map
+
+def blocks_in_shape(shape, directory='/tmp/blkpop/'):
+    return None
 
 def block_reader(state_fips, directory='/tmp/faces/'):
     sf = shapefile.Reader(directory + 'tabblock2010_%s_pophu.shp' % state_fips)
@@ -224,6 +231,21 @@ def population_moment(cd, block_ids, block_reader):
             total_pop += pop
     return area(cd.shape) * total_pop / (moment * 2 * math.pi)
 
+def convex_hull_pop_weighted(cd, block_ids, block_reader):
+    # compute total population in the district
+    dist_pop = 0
+    for block_id in block_ids:
+        block = block_reader(block_id)
+        if block:
+            dist_pop += block.record[7]
+    # compute convex hull shape
+    hull = convex_hull_shape(cd.shape)
+    # compute population in the convex hull
+    # this is the hard part
+    hull_pop = 0
+    blocks_in_hull = blocks_in_shape(hull)
+
+
 def dump_population_moments(states=None,
                             filebase='data/tl_2014_us_cd114',
                             states_filename='data/state.txt',
@@ -255,4 +277,59 @@ def dump_population_moments(states=None,
             writer = csv.writer(f)
             writer.writerows(data)
 
+def dump_pop_weighted(states=None,
+                      filebase='data/tl_2014_us_cd114',
+                      states_filename='data/state.txt',
+                      block_data_directory='/tmp/faces/',
+                      out_filename='data/population_moments.csv'):
+    if states is None:
+        states = [state for state in get_states().keys() if int(state) < 60]
+    districts = shapefile.Reader(filebase).shapeRecords()
+    district_dict = collections.defaultdict(dict)
+    for district in districts:
+        district_dict[district.record[0]][district.record[1]] = district
+    for state in states:
+        data = []
+        print "processing %s" % get_states()[state]
+        bm = block_map(state)
+        br = block_reader(state)
+        for num in district_dict[state]:
+            try:
+                data.append((get_states()[state], num,
+                             convex_hull_pop_weighted(district_dict[state][num],
+                                                      bm[num], br)))
+            except Exception as e:
+                print "%s error in %s-%s" % (e, get_states()[state], num)
+        data.sort()
+        with open(out_filename, 'a') as f:
+            writer = csv.writer(f)
+            writer.writerows(data)
 
+@whole_shape_metric
+def convex_hull(pointss):
+    all_points = []
+    for p in pointss:
+        all_points += p
+    indices = ConvexHull(all_points).vertices
+    hull = map(lambda i: [all_points[i[0]], all_points[i[1]]], indices)
+    hull_area = -sum([area_pt(h[0], h[1]) for h in hull])
+    dist_area = 0
+    for points in pointss:
+        # Note: points will actually start and end with the same point, but
+        # we use it twice just in case.  If this screws up a metric, it's
+        # probably a bad metric.
+        prev = points[-1]
+        for nxt in points:
+            dist_area += area_pt(prev, nxt)
+            prev = nxt
+    return dist_area/hull_area
+
+@whole_shape_metric
+def convex_hull_shape(pointss):
+    all_points = []
+    for p in pointss:
+        all_points += p
+    indices = ConvexHull(all_points).vertices
+    hull = map(lambda i: [all_points[i[0]], all_points[i[1]]], indices)
+    # just return a list of points for now
+    return hull
