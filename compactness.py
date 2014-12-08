@@ -149,9 +149,8 @@ def dump_data(metric, filebase='data/tl_2014_us_cd114',
     states = get_states(states_filename)
     try:
         # data = [(dist.record[5], metric(dist.shape)) for dist in districts]
-        if set(dist.record[1]) != set('Z'):
-            data = [(states[dist.record[0]], dist.record[1], metric(dist.shape))
-                    for dist in districts]
+        data = [(states[dist.record[0]], dist.record[1], metric(dist.shape))
+                for dist in districts if set(dist.record[1]) != set('Z')]
     except:
         print dist.record
         raise
