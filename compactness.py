@@ -21,6 +21,7 @@ import shapefile_fixed as shapefile
 from pyhull.convex_hull import ConvexHull
 import os
 import shapely.geometry as geo
+import re
 
 def get_states(filename='data/state.txt'):
     """Returns a dict of FIPS codes to postal abbreviations."""
@@ -151,7 +152,7 @@ def dump_data(metric, filebase='data/tl_2014_us_cd114',
     try:
         # data = [(dist.record[5], metric(dist.shape)) for dist in districts]
         data = [(states[dist.record[0]], dist.record[1], metric(dist.shape))
-                for dist in districts]
+                for dist in districts if set(dist.record[1]) != set('Z')]
     except:
         print dist.record
         raise
@@ -162,7 +163,19 @@ def dump_data(metric, filebase='data/tl_2014_us_cd114',
         writer = csv.writer(f)
         writer.writerows(data)
 
-def block_map(state_fips, directory='data/faces/'):
+def dump_multiple_data(metric, indirectory='/tmp/faces/', outdirectory='data/',
+                       file_regex=r'^tl_2014_\d\d_sld[ul]\.shp$',
+                       states_filename='data/state.txt'):
+    regex = re.compile(file_regex)
+    maybe_files = os.listdir(indirectory)
+    for f in maybe_files:
+        if regex.match(f):
+            dump_data(metric, indirectory + f[:-4], states_filename,
+                      '%s%s_%s.csv' % (outdirectory, f.split('.')[0],
+                                       metric.func_name))
+
+def block_map(state_fips, district_type, directory='/tmp/faces/'):
+    record_index = {'cd114': 30, 'sldu': 31, 'sldl': 32}[district_type]
     all_files = os.listdir(directory)
     faces_files = [f for f in all_files
                    if f.startswith('tl_2014_%s' % state_fips)
@@ -175,7 +188,7 @@ def block_map(state_fips, directory='data/faces/'):
             sf = shapefile.Reader(dbf=dbf)
             for rec in sf.records():
                 block_code = ''.join(rec[1:4]) + rec[5]
-                cd = rec[30]
+                cd = rec[record_index]
                 b_map[block_code].append(cd)
     cd_map = collections.defaultdict(list)
     for block_code in b_map:
@@ -277,8 +290,9 @@ def convex_hull_pop_weighted(cd, block_ids, all_blocks, block_reader):
 def dump_population_moments(states=None,
                             filebase='data/tl_2014_us_cd114',
                             states_filename='data/state.txt',
-                            block_data_directory='data/faces/',
-                            out_filename='data/population_moments.csv'):
+                            block_data_directory='/tmp/faces/',
+                            out_filename='data/population_moments.csv',
+                            district_type='cd114'):
     if states is None:
         # Filter out Puerto Rico etc. because there's no tabblock data for
         # them.
@@ -291,7 +305,7 @@ def dump_population_moments(states=None,
     for state in states:
         data = []
         print "processing %s" % get_states()[state]
-        bm = block_map(state)
+        bm = block_map(state, district_type)
         br = block_reader(state)
         for num in district_dict[state]:
             try:
@@ -304,6 +318,32 @@ def dump_population_moments(states=None,
         with open(out_filename, 'a') as f:
             writer = csv.writer(f)
             writer.writerows(data)
+
+def dump_state_population_moments(states=None, data_directory='/tmp/faces/',
+                                  states_filename='data/state.txt',
+                                  out_directory='data/'):
+    if states is None:
+        # Filter out Puerto Rico etc. because there's no tabblock data for
+        # them.
+        states = [state for state in get_states().keys() if int(state) < 60]
+    infilestates = [
+        (state, 'sld%s' % chamber, 
+         '%stl_2014_%s_sld%s' % (data_directory, state, chamber))
+        for chamber in 'ul'
+        for state in states]
+    for state, district_type, infile in infilestates:
+        # DC and NB don't have lower houses, so those files will be missing.
+        if os.path.exists(infile + '.shp'):
+            outfile = (out_directory + infile.split('/')[-1] +
+                       '_population_moments.csv')
+            dump_population_moments([state], infile, states_filename,
+                                    data_directory, outfile, district_type)
+        else:
+            print "file %s for state %s not found" % (infile,
+                                                      get_states()[state])
+
+
+    
 
 def dump_pop_weighted(states=None,
                       filebase='data/tl_2014_us_cd114',
