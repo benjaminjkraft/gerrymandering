@@ -4,4 +4,7 @@
 *.blg
 *.log
 *.out
+*.xml
+*.bib
+*.gz
 
