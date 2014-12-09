@@ -25,7 +25,7 @@
 
   \section{Introduction}
   
-  \section{Background}
+  \section{Background}\label{background}
   
   \subsection{Measuring Compactness}
 
@@ -46,6 +46,19 @@
   \section{Model}
 
   \section{Methods}
+
+  \subsection{Computing Compactness}
+
+  We used a number of metrics to measure the compactness of districts.  To compute them, we used the geographic data from the U.S.~Census's TIGER/Line database~\cite{censustiger} on the shapes of congressional districts and census blocks, and where applicable, population data from the 2010~Census~\cite{census2010}.
+
+  The simplest metric we computed was $4\pi A/P^2$.  The only complication to computing this metrics was the handling of coastlines, for which the district boundary is generally drawn a few miles offshore.  Rather than try to resolve this issue by clipping the district to the coastline, and therefore potentially increasing the perimeter of the district due to the complexity of the coastline, we simply computed the perimeter and area as drawn; we think the error introduced this way is likely smaller than that introduced by attempting to correct for it.
+  
+  The population moment of area was also simple to compute, since the TIGER/Line data approximates each district as a polygon.  Again, we ignored the issue of clipping to the coastline to avoid introducing more error.  Using census block population data, we also computed the population moment of inertia of each district.  We used the method described in Section~\ref{background} to deal with the limited granularity of the population data.
+
+  %TODO: Miriam fill in convex hull and circumscribed circle metrics here.
+  %TODO: possibly reorganize this subsection once Miriam adds her parts
+
+  With the non-population-based metrics especially, Alaska and Hawaii would present particular difficulties, since they include a number of widely dispersed islands.  However, Alaska has only one representative, and Hawaii only two, so since our analysis focused on states with at least three districts, we did not attempt to resolve these issues.
 
   \section{Analysis}
 
