@@ -17,9 +17,10 @@ import collections
 import csv
 import functools
 import math
-import shapefile
+import shapefile_fixed as shapefile
 from pyhull.convex_hull import ConvexHull
 import os
+import shapely.geometry as geo
 
 def get_states(filename='data/state.txt'):
     """Returns a dict of FIPS codes to postal abbreviations."""
@@ -161,7 +162,7 @@ def dump_data(metric, filebase='data/tl_2014_us_cd114',
         writer = csv.writer(f)
         writer.writerows(data)
 
-def block_map(state_fips, directory='/tmp/faces/'):
+def block_map(state_fips, directory='data/faces/'):
     all_files = os.listdir(directory)
     faces_files = [f for f in all_files
                    if f.startswith('tl_2014_%s' % state_fips)
@@ -185,10 +186,31 @@ def block_map(state_fips, directory='/tmp/faces/'):
         cd_map[cd].append(block_code)
     return cd_map
 
-def blocks_in_shape(shape, directory='/tmp/blkpop/'):
-    return None
+def all_blocks(state_fips, directory='data/faces/'):
+    sf = shapefile.Reader(directory + 'tabblock2010_%s_pophu.shp' % state_fips)
+    blocks = [record[4] for record in sf.records()]
+    return blocks
 
-def block_reader(state_fips, directory='/tmp/faces/'):
+def blocks_in_shape(shape, blocks, br):
+    #print shape.__geo_interface__
+    geo_shape = geo.shape(shape.__geo_interface__)
+    #print geo_shape
+    intersect = []
+    for block in blocks:
+        block_shape = geo.shape(br(block).shape.__geo_interface__)
+        #print block_shape
+        #break
+        # count blocks in every district they cross
+        if block_shape.within(geo_shape) or block_shape.crosses(geo_shape):
+        #if block_shape.intersects(geo_shape):
+            #print "block in district"
+            intersect.append(block)
+        #else:
+         #   print "not in dist: ", block, block_shape
+          #  break
+    return intersect
+
+def block_reader(state_fips, directory='data/faces/'):
     sf = shapefile.Reader(directory + 'tabblock2010_%s_pophu.shp' % state_fips)
     districts = enumerate(sf.records())
     indices_by_block_id = {record[4]: index for index, record in districts}
@@ -231,8 +253,9 @@ def population_moment(cd, block_ids, block_reader):
             total_pop += pop
     return area(cd.shape) * total_pop / (moment * 2 * math.pi)
 
-def convex_hull_pop_weighted(cd, block_ids, block_reader):
+def convex_hull_pop_weighted(cd, block_ids, all_blocks, block_reader):
     # compute total population in the district
+    #print "this dist: %d, all blocks in state: %d" % (len(block_ids), len(all_blocks))
     dist_pop = 0
     for block_id in block_ids:
         block = block_reader(block_id)
@@ -243,13 +266,18 @@ def convex_hull_pop_weighted(cd, block_ids, block_reader):
     # compute population in the convex hull
     # this is the hard part
     hull_pop = 0
-    blocks_in_hull = blocks_in_shape(hull)
-
+    blocks_in_hull = blocks_in_shape(hull, all_blocks, block_reader)
+    for block_id in blocks_in_hull:
+        block = block_reader(block_id)
+        if block:
+            hull_pop += block.record[7]
+    print "dist pop %d, hull pop %d" % (dist_pop, hull_pop)
+    return float(dist_pop)/hull_pop
 
 def dump_population_moments(states=None,
                             filebase='data/tl_2014_us_cd114',
                             states_filename='data/state.txt',
-                            block_data_directory='/tmp/faces/',
+                            block_data_directory='data/faces/',
                             out_filename='data/population_moments.csv'):
     if states is None:
         # Filter out Puerto Rico etc. because there's no tabblock data for
@@ -280,8 +308,8 @@ def dump_population_moments(states=None,
 def dump_pop_weighted(states=None,
                       filebase='data/tl_2014_us_cd114',
                       states_filename='data/state.txt',
-                      block_data_directory='/tmp/faces/',
-                      out_filename='data/population_moments.csv'):
+                      block_data_directory='data/faces/',
+                      out_filename='data/convex_hull_pop.csv'):
     if states is None:
         states = [state for state in get_states().keys() if int(state) < 60]
     districts = shapefile.Reader(filebase).shapeRecords()
@@ -292,14 +320,16 @@ def dump_pop_weighted(states=None,
         data = []
         print "processing %s" % get_states()[state]
         bm = block_map(state)
+        ab = all_blocks(state)
         br = block_reader(state)
         for num in district_dict[state]:
             try:
                 data.append((get_states()[state], num,
                              convex_hull_pop_weighted(district_dict[state][num],
-                                                      bm[num], br)))
+                                                      bm[num], ab, br)))
             except Exception as e:
                 print "%s error in %s-%s" % (e, get_states()[state], num)
+                raise e
         data.sort()
         with open(out_filename, 'a') as f:
             writer = csv.writer(f)
@@ -330,6 +360,31 @@ def convex_hull_shape(pointss):
     for p in pointss:
         all_points += p
     indices = ConvexHull(all_points).vertices
-    hull = map(lambda i: [all_points[i[0]], all_points[i[1]]], indices)
-    # just return a list of points for now
-    return hull
+    index_dict = {i[0]: i[1] for i in indices}
+    hull = [all_points[indices[0][0]]]
+    pt = indices[0][1]
+    while all_points[pt] != hull[0]:
+        hull.append(all_points[pt])
+        pt = index_dict[pt]
+#    print "hull ", hull
+    # return a new shape
+    wr = shapefile.Writer(shapeType=5)
+    wr.poly(parts=[hull])
+    ret = wr.shape(0)
+#    print ret.parts
+#    print ret.points
+#    ps = None
+#    coordinates = []
+#    for part in ret.parts:
+#        if ps == None:
+#            ps = part
+#            continue
+#        else:
+#            coordinates.append(tuple([tuple(p) for p in ret.points[ps:part]]))
+#            ps = part
+#            print coordinates
+#    else:
+#        coordinates.append(tuple([tuple(p) for p in ret.points[part:]]))
+#        print coordinates
+#    print ret.__geo_interface__
+    return ret
