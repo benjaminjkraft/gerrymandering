@@ -379,7 +379,7 @@ def dump_pop_weighted(states=None,
 
 def dump_state_pop_weighted(states=None, data_directory='/tmp/faces/',
                             states_filename='data/state.txt',
-                            out_directory='data/'):
+                            out_directory='data/', chambers='ul'):
     if states is None:
         # Filter out Puerto Rico etc. because there's no tabblock data for
         # them.
@@ -387,7 +387,7 @@ def dump_state_pop_weighted(states=None, data_directory='/tmp/faces/',
     infilestates = [
         (state, 'sld%s' % chamber, 
          '%stl_2014_%s_sld%s' % (data_directory, state, chamber))
-        for chamber in 'ul'
+        for chamber in chambers
         for state in states]
     for state, district_type, infile in infilestates:
         # DC and NB don't have lower houses, so those files will be missing.
