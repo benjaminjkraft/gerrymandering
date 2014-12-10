@@ -204,13 +204,13 @@ def all_blocks(state_fips, directory='data/faces/'):
     blocks = [record[4] for record in sf.records()]
     return blocks
 
-def blocks_in_shape(shape, blocks, br):
+def blocks_in_shape(shape, blocks, block_dict, br):
     #print shape.__geo_interface__
     geo_shape = geo.shape(shape.__geo_interface__)
     #print geo_shape
     intersect = []
     for block in blocks:
-        block_shape = geo.shape(br(block).shape.__geo_interface__)
+        block_shape = block_dict[block]
         #print block_shape
         #break
         # count blocks in every district they cross
@@ -266,7 +266,7 @@ def population_moment(cd, block_ids, block_reader):
             total_pop += pop
     return area(cd.shape) * total_pop / (moment * 2 * math.pi)
 
-def convex_hull_pop_weighted(cd, block_ids, all_blocks, block_reader):
+def convex_hull_pop_weighted(cd, block_ids, all_blocks, bdict, block_reader):
     # compute total population in the district
     #print "this dist: %d, all blocks in state: %d" % (len(block_ids), len(all_blocks))
     dist_pop = 0
@@ -279,7 +279,7 @@ def convex_hull_pop_weighted(cd, block_ids, all_blocks, block_reader):
     # compute population in the convex hull
     # this is the hard part
     hull_pop = 0
-    blocks_in_hull = blocks_in_shape(hull, all_blocks, block_reader)
+    blocks_in_hull = blocks_in_shape(hull, all_blocks, bdict, block_reader)
     for block_id in blocks_in_hull:
         block = block_reader(block_id)
         if block:
@@ -363,11 +363,12 @@ def dump_pop_weighted(states=None,
         bm = block_map(state, district_type, block_data_directory)
         ab = all_blocks(state, block_data_directory)
         br = block_reader(state, block_data_directory)
+        bdict = {block: geo.shape(br(block).shape.__geo_interface__) for block in ab}
         for num in district_dict[state]:
             try:
                 data.append((get_states()[state], num,
                              convex_hull_pop_weighted(district_dict[state][num],
-                                                      bm[num], ab, br)))
+                                                      bm[num], ab, bdict, br)))
             except Exception as e:
                 print "%s error in %s-%s" % (e, get_states()[state], num)
                 raise e
@@ -379,7 +380,7 @@ def dump_pop_weighted(states=None,
 
 def dump_state_pop_weighted(states=None, data_directory='/tmp/faces/',
                             states_filename='data/state.txt',
-                            out_directory='data/'):
+                            out_directory='data/', chambers='ul'):
     if states is None:
         # Filter out Puerto Rico etc. because there's no tabblock data for
         # them.
@@ -387,7 +388,7 @@ def dump_state_pop_weighted(states=None, data_directory='/tmp/faces/',
     infilestates = [
         (state, 'sld%s' % chamber, 
          '%stl_2014_%s_sld%s' % (data_directory, state, chamber))
-        for chamber in 'ul'
+        for chamber in chambers
         for state in states]
     for state, district_type, infile in infilestates:
         # DC and NB don't have lower houses, so those files will be missing.
