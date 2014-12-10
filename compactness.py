@@ -305,8 +305,8 @@ def dump_population_moments(states=None,
     for state in states:
         data = []
         print "processing %s" % get_states()[state]
-        bm = block_map(state, district_type)
-        br = block_reader(state)
+        bm =block_map(state, district_type, block_data_directory)
+        br = block_reader(state, block_data_directory)
         for num in district_dict[state]:
             try:
                 data.append((get_states()[state], num,
@@ -349,7 +349,8 @@ def dump_pop_weighted(states=None,
                       filebase='data/tl_2014_us_cd114',
                       states_filename='data/state.txt',
                       block_data_directory='data/faces/',
-                      out_filename='data/convex_hull_pop.csv'):
+                      out_filename='data/convex_hull_pop.csv',
+                      district_type='cd114'):
     if states is None:
         states = [state for state in get_states().keys() if int(state) < 60]
     districts = shapefile.Reader(filebase).shapeRecords()
@@ -359,9 +360,9 @@ def dump_pop_weighted(states=None,
     for state in states:
         data = []
         print "processing %s" % get_states()[state]
-        bm = block_map(state)
-        ab = all_blocks(state)
-        br = block_reader(state)
+        bm = block_map(state, district_type, block_data_directory)
+        ab = all_blocks(state, block_data_directory)
+        br = block_reader(state, block_data_directory)
         for num in district_dict[state]:
             try:
                 data.append((get_states()[state], num,
@@ -374,6 +375,30 @@ def dump_pop_weighted(states=None,
         with open(out_filename, 'a') as f:
             writer = csv.writer(f)
             writer.writerows(data)
+
+
+def dump_state_pop_weighted(states=None, data_directory='/tmp/faces/',
+                            states_filename='data/state.txt',
+                            out_directory='data/'):
+    if states is None:
+        # Filter out Puerto Rico etc. because there's no tabblock data for
+        # them.
+        states = [state for state in get_states().keys() if int(state) < 60]
+    infilestates = [
+        (state, 'sld%s' % chamber, 
+         '%stl_2014_%s_sld%s' % (data_directory, state, chamber))
+        for chamber in 'ul'
+        for state in states]
+    for state, district_type, infile in infilestates:
+        # DC and NB don't have lower houses, so those files will be missing.
+        if os.path.exists(infile + '.shp'):
+            outfile = (out_directory + infile.split('/')[-1] +
+                       '_convex_hull_pop.csv')
+            dump_pop_weighted([state], infile, states_filename,
+                                    data_directory, outfile, district_type)
+        else:
+            print "file %s for state %s not found" % (infile,
+                                                      get_states()[state])
 
 @whole_shape_metric
 def convex_hull(pointss):
