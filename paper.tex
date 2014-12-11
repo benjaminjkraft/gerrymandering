@@ -53,6 +53,13 @@
   
   Vote efficiency helps to overcome several of the deficiencies expressed by the Supreme Court in \textit{LULAC}.  First, by using actual election data, rather than hypothetical models, the Court can establish a definite model for determining partisan bias.  Furthermore, it will allow the court to establish a test threshold for considering when a plan becomes unconstitutional.  This measurement will be explained precisely in the Methods section.
 
+\subsection{Redistricting Processes}
+Another key aspect when discussing gerrymandering is the political processes involved in redistricting.  The Constitution provides states with the ability to create their own rules in how districts are drawn, with the provisions that states will ensure balanced district populations, and that districts are redrawn at least every 10 years \cite{LULAC v. Perry, 2006}.\\
+
+Currently, there are five general types of processes, some of which overlap.  The first, and most common, is when redistricting is done by the \textit{legislature}.    The legislature proposes plans and seeks to pass a bill for approval.  Sometimes, this may require a supermajority, or may be veto-proof, but typically requires simple majority approval from both the upper and lower houses and from the governor.  The second is the \textit{advisory commission} model, where a group of people, usually appointed officials, gather together to make non-binding recommendations to the legislature.  The third is the \textit{backup commission}, where failure of the legislature to pass a new plan triggers the activation of a predetermined committee to create an alternative.  The fourth is a \textit{political commission}, where elected officials often serve as members of a redistricting commission.  This is the sole legislative process for districting in New Jersey and Hawaii.  Last, \textit{independent commissions} are appointed groups of unelected officials independent of the legislature, who have full authority for developing new redistricting plans and require bipartisan or non-partisan composition.  This is the sole legislative process for districting in Arizona, Idaho, California, and Washington at the congressional level \cite{Levitt}. \\
+
+In addition to the overlap of legislature control and advisory or backup commissions, there are also some differences between the district drawing process for state legislatures and congressional districts.  For example, Pennsylvania's congressional districts are drawn by the state legislature whereas state legislative districts are drawn by a bipartisan political commission.  Furthermore, many states have different requirements for the composition of commissions, such as some states requiring bipartisan composition, with other states allowing elected officials to serve ex-officio.  Such distinctions create interesting results, as we will see in the Analysis section.
+
   \section{Model}
   In this paper, we will conduct an analysis on the correlation between different measures of compactness and political bias, as a method for determining the overall asymmetry of a given political area.  Furthermore, we will examine the political processes involved in drawing those areas and compare the processes with the levels of gerrymandering exhibited.\\
   
@@ -98,17 +105,19 @@
   
   The first term, $(\frac{m}{n}-0.5)$ represents the "Seat Share" or the proportion of seats that were won by party $p$ in excess (or deficient) of half the seats.  The second term represents the "Vote Share" or the proportion of the vote that was won by party $p$ in excess of half. The 0.5 adjustment terms are there so that a positive $V_{Ep}$ indicates that the given party has an advantage due to partisan gerrymandering and a disadvantage with a negative $V_{Ep}$.  Furthermore, it represents the proportion of seats lost due to this disadvantage.\\
   
-  Overall, the voter share/seat share metric is much easier to calculate, as nothing needs to be known about the individual districts, but rather the totals of the overall election.  However, as we will expose in the analysis and discussion sections, the assumption that all districts have the same total votes is wrong due to turnout variance and creates issues when analyzing the data.\\
+  Overall, the voter share/seat share metric is much easier to calculate, as nothing needs to be known about the individual districts, but rather only the totals of the overall election.  However, as we will expose in the analysis and discussion sections, the assumption that all districts have the same total votes does not hold well due to turnout variance and creates issues when analyzing the data.\\
   
 
   \section{Analysis}
-
+  
+ \subsection{Redistricting Processes}
+Taking in the states with at least 10 congressional districts, using both compactness and vote efficiency as a metric for measuring gerrymandering, we also find that purely legislative processes for redistricting produce more  
   \section{Discussion}
 
   \section{Conclusion}
   
   \subsection{Court Test Threshold}
-  10\% for areas w/at least 3 districts
+  10\% for areas w/at least 3 districts, include compactness considerations.  if close on one, consider the other
   \subsection{Policy Recommendations}
   Use nonpartisan methods
   
