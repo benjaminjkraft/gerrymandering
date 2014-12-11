@@ -454,3 +454,24 @@ def convex_hull_shape(pointss):
 #        print coordinates
 #    print ret.__geo_interface__
     return ret
+
+def merge_csvs(infiles, outfile, fields_to_combine=2):
+    header = [''] * fields_to_combine
+    rows = collections.defaultdict(list)
+    for infile in infiles:
+        max_fields = 0
+        with open(infile) as f:
+            r = csv.reader(f)
+            for line in r:
+                max_fields = max(max_fields, len(line) - fields_to_combine)
+                key = tuple(line[:fields_to_combine])
+                rows[key].extend(line[fields_to_combine:])
+        header.extend([infile.split('/')[-1][:-4]] * max_fields)
+        for key, value in rows.iteritems():
+            value.extend([''] * (len(header) - fields_to_combine - len(value)))
+    with open(outfile, 'w') as f:
+        w = csv.writer(f)
+        lines = [list(key) + value for key, value in rows.iteritems()]
+        lines.sort()
+        w.writerow(header)
+        w.writerows(lines)
