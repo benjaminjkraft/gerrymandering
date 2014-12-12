@@ -1,6 +1,6 @@
 \documentclass[12pt]{article}
 
-\usepackage{fancyhdr,hyperref,setspace,booktabs,amsmath}
+\usepackage{fancyhdr,hyperref,setspace,booktabs,amsmath,multirow,mathpazo}
 \usepackage[pdftex]{graphicx}
 \usepackage[margin=1in,includehead]{geometry}
 
@@ -117,7 +117,50 @@ In addition to the overlap of legislature control and advisory or backup commiss
   
 
   \section{Analysis}
+
+  \subsection{Compactness and Efficiency Gap}
+
+  \begin{table}
+    \begin{center}
+      \begin{tabular}{lrrrr}\toprule
+        \multirow{2}{*}{Metric} & \multicolumn{2}{c}{Efficiency gap (seats)} & \multicolumn{2}{c}{Efficiency gap (\%)} \\
+               & \multicolumn{1}{c}{Seat share} & \multicolumn{1}{c}{Wasted votes} & \multicolumn{1}{c}{Seat share} & \multicolumn{1}{c}{Wasted votes} \\\midrule
+        \multirow{2}{*}{Area vs.~Perimeter} & -3.24 & -3.26 & -18.1 & -6.6 \\
+        & (1.81) & (2.04) & (14.4) & (14.7) \\\midrule
+        \multirow{2}{*}{Convex Hull Area} & -3.80 & -3.73 & -13.4 & 1.0 \\
+        & (2.00) & (2.26) & (16.2) & (16.4) \\\midrule
+        \multirow{2}{*}{Convex Hull Population} & -2.45 & -2.24 & -16.4 & -10.4 \\
+        & (1.76) & (1.99) & (13.8) & (14.0) \\\midrule
+        \multirow{2}{*}{Moment of Area} & -5.67* & -5.63 & -19.1 & -6.8 \\
+        & (2.52) & (2.85) & (20.6) & (21.0) \\\midrule
+        \multirow{2}{*}{Moment of Population} & -0.69* & -0.71* & -3.3 & -1.6 \\
+        & (0.29) & (0.33) & (2.4) & (2.4) \\\bottomrule
+      \end{tabular}
+      \caption{Regression coefficients for efficiency gap regressed over each compactness metric separately on all states with at least three districts.  * denotes $p<.05$ (two-tailed test); standard errors in parentheses.\label{t:efficiency3}}
+    \end{center}
+  \end{table}
   
+  \begin{table}
+    \begin{center}
+      \begin{tabular}{lrrrr}\toprule
+        Metric & \multicolumn{2}{c}{Efficiency gap (seats)} & \multicolumn{2}{c}{Efficiency gap (\%)} \\
+               & \multicolumn{1}{c}{Seat share} & \multicolumn{1}{c}{Wasted votes} & \multicolumn{1}{c}{Seat share} & \multicolumn{1}{c}{Wasted votes} \\\midrule
+        \multirow{2}{*}{Area vs.~Perimeter} & -7.92 & -9.91 & -76.2* & -84.3* \\
+        & (5.10) & (6.03) & (34.4) & (36.4) \\\midrule
+        \multirow{2}{*}{Convex Hull Area} & -13.50* & -16.12* & -114.2* & -126.2* \\
+        & (5.77) & (6.90) & (38.8) & (40.7) \\\midrule
+        \multirow{2}{*}{Convex Hull Population} & -9.49* & -9.75 & -72.0* & -70.6 \\
+        & (4.24) & (5.36) & (30.7) & (34.3) \\\midrule
+        \multirow{2}{*}{Moment of Area} & -15.99** & -16.55* & -125.8** & -128.9** \\
+        & (4.22) & (5.81) & (27.8) & (32.3) \\\midrule
+        \multirow{2}{*}{Moment of Population} & -2.91 & -3.31 & -26.0* & -26.8* \\
+        & (1.38) & (1.68) & (9.1) & (10.1) \\\bottomrule
+      \end{tabular}
+      \caption{Regression coefficients for efficiency gap regressed over each compactness metric separately on all states with at least ten districts.  * denotes $p<.05$, ** denotes $p<.01$ (two-tailed test); standard errors in parentheses.\label{t:efficiency10}}
+    \end{center}
+  \end{table}
+
+
  \subsection{Redistricting Processes}
 Taking in the states with at least 10 congressional districts, using both compactness and vote efficiency as a metric for measuring gerrymandering, we also find that legislative processes for redistricting produce more gerrymandered districts. The top half of states by each metric (Pennsylvania, Ohio, North Carolina, Michigan, and Virginia for both metrics, Texas for vote efficiency, and Illinois for compactness) all use legislative redistricting processes.  Likewise, three of the five states (California, Washington and New Jersey) in the bottom half of gerrymandering as measured by both metrics employ independent redistricting commissions or equally partisan political commissions.\\
 Looking into this process further, we see this disparity even further in some of the most prominent of gerrymandered states -- Pennsylvania.  In Pennsylvania, the state legislature's Congressional plan produced an efficiency gap of nearly 24\%, or 4.27 seats.  However, the state house districts produced a seat gap of less than one -- out of over 200 seats.  This state house plan was drawn by an equally partisan political commission with representatives selected evenly by each party, thus forcing the state house districts to be drawn in a fair manner.  On the other hand, the Republican state legislature then subsequently forced through the plan that created the 4-seat bias, including a 26-24 vote in the state senate, with all Democrats and a few Republicans voting against the clearly gerrymandered plan.  The nature of such a biased legislative process clearly can lead to inequality in the system.  \\
