@@ -35,6 +35,17 @@ In this paper, we compare some of the metrics of gerrymandering that have been p
   
   \subsection{Measuring Compactness}
 
+  \begin{figure}
+    \begin{center}
+      \parbox{0.49\textwidth}{\centering \includegraphics[width=0.48\textwidth]{map-area_per.pdf} \\ Area vs. Perimeter}
+      \parbox{0.49\textwidth}{\centering \includegraphics[width=0.48\textwidth]{map-convex_hull.pdf} \\ Convex Hull Area}
+      \parbox{0.49\textwidth}{\centering \includegraphics[width=0.48\textwidth]{map-convex_hull_pop.pdf} \\ Convex Hull Population}
+      \parbox{0.49\textwidth}{\centering \includegraphics[width=0.48\textwidth]{map-moment_area.pdf} \\ Moment of Area}
+      \parbox{0.49\textwidth}{\centering \includegraphics[width=0.48\textwidth]{map-moment_pop.pdf} \\ Moment of Population}
+      \parbox{0.49\textwidth}{\centering \parbox{0.4\textwidth}{\caption{Compactness of Pennsylvania districts as computed by various metrics.  Green is the most compact, and red is the least.\label{f:compactnessmaps}}}}
+    \end{center}
+  \end{figure}
+
   When people think of measuring gerrymandering, the first kind of metric that comes to mind is generally one that tries to measure the compactness of a district.  In fact, there are a number of ways of measuring compactness; some are better than others, but many measure different types of compactness.  There are three major types: those that measure the dispersion of the district from its center, those that measure some form of boundary complexity, and those that are based on population and population density.
 % TODO: maybe this wants a figure to show some of the metrics visually? I would make one but my laptop crashes when I try to use qgis. At least convex hull probably wants this, maybe also circumscribing/inscribed circle although those matter less since we never computed them.
 
