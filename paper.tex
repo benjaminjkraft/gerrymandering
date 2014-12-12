@@ -35,17 +35,6 @@ In this paper, we compare some of the metrics of gerrymandering that have been p
   
   \subsection{Measuring Compactness}
 
-  \begin{figure}
-    \begin{center}
-      \parbox{0.49\textwidth}{\centering \includegraphics[width=0.48\textwidth]{map-area_per.pdf} \\ Area vs. Perimeter}
-      \parbox{0.49\textwidth}{\centering \includegraphics[width=0.48\textwidth]{map-convex_hull.pdf} \\ Convex Hull Area}
-      \parbox{0.49\textwidth}{\centering \includegraphics[width=0.48\textwidth]{map-convex_hull_pop.pdf} \\ Convex Hull Population}
-      \parbox{0.49\textwidth}{\centering \includegraphics[width=0.48\textwidth]{map-moment_area.pdf} \\ Moment of Area}
-      \parbox{0.49\textwidth}{\centering \includegraphics[width=0.48\textwidth]{map-moment_pop.pdf} \\ Moment of Population}
-      \parbox{0.49\textwidth}{\centering \parbox{0.4\textwidth}{\caption{Compactness of Pennsylvania districts as computed by various metrics.  Green is the most compact, and red is the least.\label{f:compactnessmaps}}}}
-    \end{center}
-  \end{figure}
-
   When people think of measuring gerrymandering, the first kind of metric that comes to mind is generally one that tries to measure the compactness of a district.  In fact, there are a number of ways of measuring compactness; some are better than others, but many measure different types of compactness.  There are three major types: those that measure the dispersion of the district from its center, those that measure some form of boundary complexity, and those that are based on population and population density.
 % TODO: maybe this wants a figure to show some of the metrics visually? I would make one but my laptop crashes when I try to use qgis. At least convex hull probably wants this, maybe also circumscribing/inscribed circle although those matter less since we never computed them.
 
@@ -59,12 +48,25 @@ In this paper, we compare some of the metrics of gerrymandering that have been p
   \[I_P = \iint ((x-x_0)^2 + (y-y_0)^2) \rho dx dy \]
   where $\rho$ is the population density and $(x_0, y_0$ is the center of mass of the district, now weighted by population.  In practice, since we do not know the location of each individual in the district, we may simply assume that each person lives at the center of the census tabulation block in which they were counted.  Then the formula becomes
   \[I_P = \sum_{b} ((x_b-x_0)^2 + (y_b-y_0)^2) P_b\]
-  where the sum is taken over census tabulation blocks $b$, with $(x_b, y_b)$ the center of mass (weighted by area) of the census block, and $P_b$ its population.  This measure was first proposed by Weaver.~\cite{weaver}
+  where the sum is taken over census tabulation blocks $b$, with $(x_b, y_b)$ the center of mass (weighted by area) of the census block, and $P_b$ its population.  In order to make the metric less dependent on population, we can use the metric $AP_d/(2\pi I_P)$; this does not necessarily normalize the metric to be between 0 and 1, but at least makes it independent of the total area and total population.  Using moment of population to measure district compactness was first proposed by Weaver.~\cite{weaver}
+
+  \begin{figure}
+    \begin{center}
+      \parbox{0.49\textwidth}{\centering \includegraphics[width=0.48\textwidth]{map-area_per.pdf} \\ Area vs. Perimeter}
+      \parbox{0.49\textwidth}{\centering \includegraphics[width=0.48\textwidth]{map-convex_hull.pdf} \\ Convex Hull Area}
+      \parbox{0.49\textwidth}{\centering \includegraphics[width=0.48\textwidth]{map-convex_hull_pop.pdf} \\ Convex Hull Population}
+      \parbox{0.49\textwidth}{\centering \includegraphics[width=0.48\textwidth]{map-moment_area.pdf} \\ Moment of Area}
+      \parbox{0.49\textwidth}{\centering \includegraphics[width=0.48\textwidth]{map-moment_pop.pdf} \\ Moment of Population}
+      \parbox{0.49\textwidth}{\centering \parbox{0.4\textwidth}{\caption{Compactness of Pennsylvania districts as computed by various metrics.  Green is the most compact, and red is the least.\label{f:compactnessmaps}}}}
+    \end{center}
+  \end{figure}
+
+  While these measures generally correlate with each other, they do measure somewhat different things.  Figure~\ref{f:compactnessmaps} shows the compactness of each district in Pennsylvania by each compactness metric.  In general, the same districts tend to do well and badly by a number of metrics: for instance districts 2 and 4 are fairly compact by any measure, and districts 7 and 12 are not compact by any metric.  However, each does worse on some metrics and better on others.  For instance, district 7 has very low area compared to its perimeter, and its convex hull is giant compared to the district.  However, it is only somewhat more dispersed from its center than a compact district would be, so on the moment of area and moment of population metrics it does less poorly.  The barbell-shaped district 12 does poorly by moment of area and moment of population, but its boundary is fairly simple, so on the area-perimeter metric it does less poorly.
   
     \subsection{Partisan Symmetry and Vote Efficiency}
- While geographic compactness is a widely-considered metric for compactness, others have focused on actual results for determining unacceptable redistricting plans.  Over the last few years, the courts have increasingly rejected a variety of rationales cited to claim illegal gerrymandering, including "partisan intent",  "minority party entrenchment", and "lack of proportionality".  However, in \textit{League of United Latin American Citizens (LULAC) v. Perry, Governor of Texas et al.}, (2006), the majority recognized that it would accept a lack of \textit{symmetry} as an acceptable argument for determining unconstitutional gerrymandering. \\
+ While geographic compactness is a widely-considered metric for compactness, others have focused on actual results for determining unacceptable redistricting plans.  Over the last few years, the courts have increasingly rejected a variety of rationales cited to claim illegal gerrymandering, including ``partisan intent'',  ``minority party entrenchment'', and ``lack of proportionality''.  However, in \textit{League of United Latin American Citizens (LULAC) v. Perry, Governor of Texas et al.}, (2006), the majority recognized that it would accept a lack of \textit{symmetry} as an acceptable argument for determining unconstitutional gerrymandering. \\
   
-  A given plan has symmetry if "similary-situated parties are treated equally", thus expecting that an even split in votes across two parties would have an even split in seats. Furthermore, if a plaintiff challenging a redistricting plan can demonstrate partisan intent and asymmetry, it would be sufficient for the burden of proof to shift to the state.  Nevertheless, while acknowledging the viability of symmetry as a metric to determine a discriminatory impact on voters, the court failed to establish an accepted standard or test to determine illegal gerrymandering.  Existing measures at the time, as calculated by social scientists, used hypothetical models to predict how election outcomes would turn out, given certain shifts in the electorate and certain vote shares in a given election. The court rejected the notion of using hypothetical models for a standard of constitutionality. \cite{LULAC} \\
+  A given plan has symmetry if ``similary-situated parties are treated equally'', thus expecting that an even split in votes across two parties would have an even split in seats. Furthermore, if a plaintiff challenging a redistricting plan can demonstrate partisan intent and asymmetry, it would be sufficient for the burden of proof to shift to the state.  Nevertheless, while acknowledging the viability of symmetry as a metric to determine a discriminatory impact on voters, the court failed to establish an accepted standard or test to determine illegal gerrymandering.  Existing measures at the time, as calculated by social scientists, used hypothetical models to predict how election outcomes would turn out, given certain shifts in the electorate and certain vote shares in a given election. The court rejected the notion of using hypothetical models for a standard of constitutionality. \cite{LULAC} \\
   
   With this in mind,  as an alternative to other existing metrics, two legal scholars recently proposed measuring \textit{vote efficiency} as a way to quantify partisan symmetry and partisan gerrymandering \cite{stephanopoulos}.  Vote efficiency is a measure of how well a given vote applied towards improving political representation.  In the case that a voter's desired candidate wins, any vote beyond what is necessary to win (in the simple case, 50\% + 1 vote) is wasted.  In the case when a voter's desired candidate loses, all votes for the losing candidate are wasted. Redistricting plans seeking a partisan bias will lead to fewer wasted votes for the favored party, while increasing wasted votes for the disadvantaged party. \\
   
@@ -76,6 +78,9 @@ Another key aspect when discussing gerrymandering is the political processes inv
 Currently, there are five general types of processes, some of which overlap.  The first, and most common, is when redistricting is done by the \textit{legislature}.    The legislature proposes plans and seeks to pass a bill for approval.  Sometimes, this may require a supermajority, or may be veto-proof, but typically requires simple majority approval from both the upper and lower houses and from the governor.  The second is the \textit{advisory commission} model, where a group of people, usually appointed officials, gather together to make non-binding recommendations to the legislature.  The third is the \textit{backup commission}, where failure of the legislature to pass a new plan triggers the activation of a predetermined committee to create an alternative.  The fourth is a \textit{political commission}, where elected officials often serve as members of a redistricting commission.  This is the sole legislative process for districting in New Jersey and Hawaii.  Last, \textit{independent commissions} are appointed groups of unelected officials independent of the legislature, who have full authority for developing new redistricting plans and require bipartisan or non-partisan composition.  This is the sole legislative process for districting in Arizona, Idaho, California, and Washington at the congressional level \cite{Levitt}. \\
 
 In addition to the overlap of legislature control and advisory or backup commissions, there are also some differences between the district drawing process for state legislatures and congressional districts.  For example, Pennsylvania's congressional districts are drawn by the state legislature whereas state legislative districts are drawn by a bipartisan political commission.  Furthermore, many states have different requirements for the composition of commissions, such as some states requiring bipartisan composition, with other states allowing elected officials to serve ex-officio.  Such distinctions create interesting results, as we will see in the Analysis section.
+
+\subsection{Related Research and Legal Precedent}
+%TODO(benkraft): write this section
 
   \section{Model}
   In this paper, we will conduct an analysis on the correlation between different measures of compactness and political bias, as a method for determining the overall asymmetry of a given political area.  Furthermore, we will examine the political processes involved in drawing those areas and compare the processes with the levels of gerrymandering exhibited.\\
@@ -120,7 +125,7 @@ In addition to the overlap of legislature control and advisory or backup commiss
      Stephanopolous and McGhee also propose that $V_{pi}+V_{oi}$ remains constant, as the size of any district in a given state cannot vary significantly, thus requiring equality.  Under this assumption, where the total votes in any given district are constant at $V_{t} = V_{pi}+V_{oi}$, and party $p$ wins $m$ of $n$ seats, the above equation simplifies to:
      \[V_{Ep} = (\frac{m}{n}-0.5) - 2*(\frac{\sum^{n}V_{pi}}{\sum^n{V_t}}-0.5)\]
   
-  The first term, $(\frac{m}{n}-0.5)$ represents the "Seat Share" or the proportion of seats that were won by party $p$ in excess (or deficient) of half the seats.  The second term represents the "Vote Share" or the proportion of the vote that was won by party $p$ in excess of half. The 0.5 adjustment terms are there so that a positive $V_{Ep}$ indicates that the given party has an advantage due to partisan gerrymandering and a disadvantage with a negative $V_{Ep}$.  Furthermore, it represents the proportion of seats lost due to this disadvantage.\\
+  The first term, $(\frac{m}{n}-0.5)$ represents the ``seat share'' or the proportion of seats that were won by party $p$ in excess (or deficient) of half the seats.  The second term represents the ``vote share'' or the proportion of the vote that was won by party $p$ in excess of half. The 0.5 adjustment terms are there so that a positive $V_{Ep}$ indicates that the given party has an advantage due to partisan gerrymandering and a disadvantage with a negative $V_{Ep}$.  Furthermore, it represents the proportion of seats lost due to this disadvantage.\\
   
   Overall, the voter share/seat share metric is much easier to calculate, as nothing needs to be known about the individual districts, but rather only the totals of the overall election.  However, as we will expose in the analysis and discussion sections, the assumption that all districts have the same total votes does not hold well due to turnout variance and creates issues when analyzing the data.\\
   
@@ -194,6 +199,8 @@ In addition to the overlap of legislature control and advisory or backup commiss
     \end{center}
   \end{figure}
 
+  %TODO(benkraft): write text for this section
+
 
  \subsection{Redistricting Processes}
 Taking in the states with at least 10 congressional districts, using both compactness and vote efficiency as a metric for measuring gerrymandering, we also find that legislative processes for redistricting produce more gerrymandered districts. The top half of states by each metric (Pennsylvania, Ohio, North Carolina, Michigan, and Virginia for both metrics, Texas for vote efficiency, and Illinois for compactness) all use legislative redistricting processes.  Likewise, three of the five states (California, Washington and New Jersey) in the bottom half of gerrymandering as measured by both metrics employ independent redistricting commissions or equally partisan political commissions.\\
@@ -204,6 +211,7 @@ With the aforementioned data considered, several states do not observe the same 
   \section{Discussion}
   \subsection{Usefulness of Different Metrics}
   \subsubsection{Compactness Metrics}
+  %TODO(benkraft): write the other half of this section, maybe reorganize a bit
   Metrics that use the convex hull of a district are based on the observation that problematic districts are likely to have a section ``cut out'', jut out into a neighboring district, or stretch out in a long, narrow, curved line. Like the perimeter metric, they disadvantage districts with jagged boundaries, although less heavily. The purely geometric version, like other compactness metrics, penalizes states that are non-compact. It particularly affects states that are on a coast and have islands, because a large offshore area gets counted in the convex hull. For example, California's 14th district gets an especially bad score because it combines a small, densely populated area with a group of islands several miles offshore. However, the population-based version does not have these issues. In cases where a state has complex boundaries with other states, the population outside of the state can simply be ignored. In cases where a state has islands, the offshore area has no population so it has no effect.
   
   \subsubsection{Voter Efficiency}
@@ -214,6 +222,8 @@ With the aforementioned data considered, several states do not observe the same 
   Third, the voter efficiency gap is an extremely volatile measure.  Especially at the state house level, where representatives will be elected by only a few tens of thousands of voters, changes in the composition of the electorate can dramatically alter the quantities of votes wasted.  A seat flip in a close election can dramatically alter the amount of wasted votes for each party, essentially swapping the number of wasted votes.  In today's electorate, this could easily happen, in particular with the growing minority population.
   
   \subsection{Relationship Between Compactness and Bias Measures}
+
+  %TODO(benkraft): write this section
 
   \section{Legislative and Legal Changes}
   
@@ -230,6 +240,7 @@ With the aforementioned data considered, several states do not observe the same 
   
   \section{Conclusion}
   Partisan gerrymandering damages the fundamental nature of our representative democracy.  It produces unfair advantages that prevent citizens from being represented fairly.  Using quantifiable metrics of partisan gerrymandering, we hope to create a standard that can take out results that are blatantly biased, regardless of actual intent of those who created the plans.
+
   
   \singlespacing{}
 
