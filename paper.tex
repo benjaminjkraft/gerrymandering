@@ -133,6 +133,12 @@ In addition to the overlap of legislature control and advisory or backup commiss
   \section{Analysis}
 
   \subsection{Compactness and Efficiency Gap}
+  
+  In order to determine the relationship between compactness and partisan bias in district drawing, we used the data we computed for congressional districts to run regressions.  We regressed both the seat share and wasted votes computations of efficiency gap, both as a percentage of the legislature and as a raw number of seats on each measure of compactness separately.  Since little gerrymandering is possible in states with only one or two districts, we excluded those states; we additionally ran each regression on those states that have at least ten districts, to see the effect on those larger states where more gerrymandering is possible.
+
+  The regression coefficients are shown in Tables~\ref{t:efficiency3}~and~\ref{t:efficiency10}, and the raw scatterplots are shown in Figures~\ref{f:compactnessplots}~and~\ref{f:effgapplots}.  All but one coefficient was negative, suggesting that districts which are less compact tend to be more gerrymandered.  In the twenty regressions on the large states, 14 of the coefficients were statistically significant at the $p<.05$ level.  The results were much weaker when including the smaller states, presumably because smaller states have less gerrymandering, and therefore tend only to add noise to the data.  In the latter regression, only a few of the results were statistically significant, and in general they were stronger when considering the efficiency gap as an absolute number of seats, presumably for the same reason.
+  
+  Of the efficiency gap computations, the seat share computation appeared to actually have a stronger relationship to compactness, in spite of being a simplified metric.  However, due to the small sample size and the fact that the two metrics produce similar results in many states, this may not be a meaningful difference.  Of the compactness metrics, moment of area performed the best; convex hull area and moment of population also did well.  The area-perimeter metric was ineffective; it did correlate with the seat share, but less strongly, and there were several states with low district compactness with little partisan bias.  The convex hull population metric also did poorly; we conjecture that this is due to the fact that many suburban districts, even those which are reasonably shaped, include much of the nearby city in their convex hull.
 
   \begin{table}
     \begin{center}
@@ -195,12 +201,20 @@ In addition to the overlap of legislature control and advisory or backup commiss
       \includegraphics[width=0.49\textwidth]{ssp-moment_pop.pdf}
       \includegraphics[width=0.49\textwidth]{wvp-moment_pop.pdf}
 
-      \caption{Plots of each efficiency gap computation against each compactness as measured by moment of population.\label{f:effgapplots}}
+      \caption{Plots of each efficiency gap computation against compactness as measured by moment of population.\label{f:effgapplots}}
     \end{center}
   \end{figure}
 
-  %TODO(benkraft): write text for this section
-  %TODO(benkraft): add commentary on state house analyses
+  We also analyzed some of the state legislatures.  Unfortunately, the data for these races is not as easily accessible, so we had to record it manually from the websites of various Secretaries of State and Boards of Elections~\cite{heda,florida,georgia,illinois,newyork,washington}, and we were only able to collect and analyze the data for a few of the largest states' lower houses.  Because of the limited amount of data, none of the regression coefficients were statistically significant, although they all had the right sign.  Scatterplots for two of the stronger results are shown in Figure~\ref{f:stateplots}.
+
+  \begin{figure}
+    \begin{center}
+      \includegraphics[width=0.49\textwidth]{sldl-ssp-moment_area.pdf}
+      \includegraphics[width=0.49\textwidth]{sldl-ssp-moment_pop.pdf}
+
+      \caption{Plots of efficiency gap as measured by seat share, as a percentage of the legislature, against moment of area and moment of population.\label{f:stateplots}}
+    \end{center}
+  \end{figure}
 
 
  \subsection{Redistricting Processes}
