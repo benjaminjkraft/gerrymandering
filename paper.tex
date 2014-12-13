@@ -100,7 +100,7 @@ Several authors have also looked at related questions on actual congressional ma
 
   \subsection{Computing Compactness}
 
-  We used a number of the metrics discussed in Section~\ref{background} to measure the compactness of districts.  To compute them, we used the geographic data from the U.S.~Census's TIGER/Line database~\cite{censustiger} on the shapes of congressional districts and census blocks, and where applicable, population data from the 2010~Census~\cite{census2010}.
+  We used a number of the metrics discussed in Section~\ref{s:background} to measure the compactness of districts.  To compute them, we used the geographic data from the U.S.~Census's TIGER/Line database~\cite{censustiger} on the shapes of congressional districts and census blocks, and where applicable, population data from the 2010~Census~\cite{census2010}.
 
   The simplest metric we computed was $4\pi A/P^2$.  The only complication to computing this metrics was the handling of coastlines, for which the district boundary is generally drawn a few miles offshore.  Rather than try to resolve this issue by clipping the district to the coastline, and therefore potentially increasing the perimeter of the district due to the complexity of the coastline, we simply computed the perimeter and area as drawn; we think the error introduced this way is likely smaller than that introduced by attempting to correct for it.  We computed the moment of area in a similar way.
 
@@ -257,9 +257,7 @@ With the aforementioned data considered, several states do not observe the same 
   We also propose that states revise their policy on allowing state legislatures to draw lines independently.  Nonpartisan and balanced partisan processes create fair, consensus plans, as they will require agreements that prevent the parties from simply passing a partisan bill designed to reduce the prevalence of partisan gerrymandering.
 
   \section{Conclusion}
-  Partisan gerrymandering damages the fundamental nature of our representative democracy.  It produces unfair advantages that prevent citizens from being represented fairly.  Using quantifiable metrics of partisan gerrymandering, we hope to create a standard that can take out results that are blatantly biased, regardless of actual intent of those who created the plans.
-
-  %TODO: more conclusioney stuff
+  Partisan gerrymandering damages the fundamental nature of our representative democracy.  It produces unfair advantages that prevent citizens from being represented fairly.  Real redistricting is too complex for a single simple metric to be able to quantify all types of gerrymandering, but by combining multiple metrics, it is possible to catch a number of different types of gerrymanders in a specific and quantifiable way.  Using quantifiable metrics of partisan gerrymandering, we hope to create a standard that can delineate results that are blatantly biased, regardless of any ability to discover the intent of those who created the plans.
 
 
   \singlespacing{}
