@@ -97,7 +97,7 @@ In addition to the overlap of legislature control and advisory or backup commiss
 
   \subsection{Computing Compactness}
 
-  We used a number of metrics to measure the compactness of districts.  To compute them, we used the geographic data from the U.S.~Census's TIGER/Line database~\cite{censustiger} on the shapes of congressional districts and census blocks, and where applicable, population data from the 2010~Census~\cite{census2010}.
+  We used a number of the metrics discussed in Section~\ref{background} to measure the compactness of districts.  To compute them, we used the geographic data from the U.S.~Census's TIGER/Line database~\cite{censustiger} on the shapes of congressional districts and census blocks, and where applicable, population data from the 2010~Census~\cite{census2010}.
 
   The simplest metric we computed was $4\pi A/P^2$.  The only complication to computing this metrics was the handling of coastlines, for which the district boundary is generally drawn a few miles offshore.  Rather than try to resolve this issue by clipping the district to the coastline, and therefore potentially increasing the perimeter of the district due to the complexity of the coastline, we simply computed the perimeter and area as drawn; we think the error introduced this way is likely smaller than that introduced by attempting to correct for it.  We computed the moment of area in a similar way.
 
@@ -107,9 +107,7 @@ In addition to the overlap of legislature control and advisory or backup commiss
 
   The ratio of district population to population inside the convex hull of the district introduced another issue: determining population inside an arbitrary area. The available population data was by census block, so we had to compute which census blocks are inside each convex hull. We chose to count a census block as being ``inside'' the convex hull if the interior of the census block and the interior of the convex hull overlap. We ignored census blocks outside of the state that the district is in, even if those blocks might be inside the convex hull, since they are irrelevant for redistricting purposes and it is ideal to avoid penalizing states which are themselves not compact.
 
-  %TODO: possibly reorganize this subsection once Miriam adds her parts
-
-  With the non-population-based metrics especially, Alaska and Hawaii would present particular difficulties, since they include a number of widely dispersed islands.  However, Alaska has only one representative, and Hawaii only two, so since our analysis focused on states with at least three districts, we did not attempt to resolve these issues.
+  With the non-population-based metrics especially, Alaska and Hawaii present particular difficulties, since they include a number of widely dispersed islands.  However, Alaska has only one representative, and Hawaii only two, so since our analysis focused on states with at least three districts, we did not attempt to resolve these issues.
 
   \subsection {Computing Voter Efficiency}
   We calculate voter efficiency using data from a variety of sources.  The US Census Data, along with the Harvard Election Data Archive~\cite{heda} presents a great resource for Federal Election results.  State-by-state elections are best sourced from the respective state agencies that govern the election, such as the Secretary of State's office or Board of Elections.  To calculate voter efficiency, we first go back to the definition of wasted votes.  This measure of voter efficiency will only analyze two-party, single-winner elections.  Thus, for a given party $p$, their opposing party $o$ and a given district $i$, the number of wasted votes  if party $p$ wins ($V_{p} > V_{o}$)  is given by
