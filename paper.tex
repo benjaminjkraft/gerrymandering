@@ -29,7 +29,7 @@ There are a few possible motivations for gerrymandering. One is straightforward 
 
 There are legal limits on the creation of biased districts, but there is no accepted test of whether or not gerrymandering has occurred. Courts can look at a plan and decide whether the redistricting plan appears to be biased, often based on the presence of districts with strange shapes. However, laws against gerrymandering could have a stronger effect if there were an accepted objective way of measuring it.
 
-In this paper, we compare some of the metrics of gerrymandering that have been proposed. They include metrics based on the shape of districts, metrics based on population in the district and the surrounding area, and a recently proposed metric that measures the resulting bias.
+In this paper, we compare some of the metrics of gerrymandering that have been proposed. They include metrics based on the shape of districts, metrics based on population in the district and the surrounding area, and a recently proposed metric that measures the resulting bias.  In Section~\ref{s:background} we discuss past research on gerrymandering and compactness.  In Section~\ref{s:model} we propose a model for gerrymandering, and in Section~\ref{s:methods} we introduce the data we use to test it.  Finally, in Section~\ref{s:analysis} we present our analysis of that data, and in Section~\ref{s:discussion} we discuss its implications.
 
   \section{Background}\label{s:background}
 
@@ -85,7 +85,7 @@ In addition to proposing metrics for compactness and gerrymandering, a number of
 
 Several authors have also looked at related questions on actual congressional maps.  Stephanopoulos~\cite{stephanopoulos2} investigated the effects of consequentialist legal requirements, such as requirements of partisan symmetry, and found that they were generally ineffective, and did consider compactness in passing, although it was not the focus of the work.  Fryer and Holden~\cite{fryer} compared ``maximally compact'' districts to the actual districts, and found them to exhibit less partisan bias.  However, to our knowledge, none have compared compactness and partisan bias on actual legislative or congressional districts.
 
-  \section{Model}
+  \section{Model}\label{s:model}
   In this paper, we will conduct an analysis on the correlation between different measures of compactness and political bias, as a method for determining the overall asymmetry of a given political area.  Furthermore, we will examine the political processes involved in drawing those areas and compare the processes with the levels of gerrymandering exhibited.
 
   We expect to see the following in our results:
@@ -96,7 +96,7 @@ Several authors have also looked at related questions on actual congressional ma
 
   We predict these outcomes on the following basis: non-compact districts are oftentimes designed in such a way that extensive work to include wide swaths of voters will lead to districts where people are spread out over a wide area or in a few very dense spaces.  Furthermore, these districts are designed to create partisan bias, not partisan fairness, and thus will correlate with the voter efficiency.  Also, we expect to find that partisan legislative process will more likely produce gerrymandered districts, as the lack the political checks and balances than an independent or bi-partisan political body would ensure.  While we do not expect all partisan legislative processes to have gerrymandered districts, we still expect that all gerrymandered districts will be created by partisan legislative processes.
 
-  \section{Methods}
+  \section{Methods}\label{s:methods}
 
   \subsection{Computing Compactness}
 
@@ -112,7 +112,7 @@ Several authors have also looked at related questions on actual congressional ma
 
   With the non-population-based metrics especially, Alaska and Hawaii present particular difficulties, since they include a number of widely dispersed islands.  However, Alaska has only one representative, and Hawaii only two, so since our analysis focused on states with at least three districts, we did not attempt to resolve these issues.
 
-  \subsection {Computing Voter Efficiency}
+  \subsection{Computing Voter Efficiency}
   We calculate voter efficiency using data from a variety of sources.  The US Census Data, along with the Harvard Election Data Archive~\cite{heda} presents a great resource for Federal Election results.  State-by-state elections are best sourced from the respective state agencies that govern the election, such as the Secretary of State's office or Board of Elections.  To calculate voter efficiency, we first go back to the definition of wasted votes.  This measure of voter efficiency will only analyze two-party, single-winner elections.  Thus, for a given party $p$, their opposing party $o$ and a given district $i$, the number of wasted votes  if party $p$ wins ($V_{p} > V_{o}$)  is given by
     \[ V_{wpi} = V_{pi} - \frac{V_{pi}+V_{oi}}{2}\]
   as all votes beyond 50\% are wasted. Otherwise, if party $p$ loses the district, then
@@ -130,7 +130,7 @@ Several authors have also looked at related questions on actual congressional ma
   Overall, the voter share/seat share metric is much easier to calculate, as nothing needs to be known about the individual districts, but rather only the totals of the overall election.  However, as we will expose in the analysis and discussion sections, the assumption that all districts have the same total votes does not hold well due to turnout variance and creates issues when analyzing the data.
 
 
-  \section{Analysis}
+  \section{Analysis}\label{s:analysis}
 
   \subsection{Compactness and Efficiency Gap}
 
@@ -223,7 +223,7 @@ Looking into this process further, we see this disparity even further in some of
 
 With the aforementioned data considered, several states do not observe the same trend.  For example, Georgia ranks highly on compactness and partisan bias metrics, and does not appear to be very gerrymandered.  However, it has a legislative process to draw congressional districts, and has a fairly partisan Republican state legislature.  While we would expect to see a more gerrymandered district, it appears as though that is not the case.  One possible explanation for this phenomenon is that several Democratic Congressmen from Georgia, such as John Barrow, are often more conservative than their counterparts from other states in Congress.  It was not until after 2000 that the state shifted to Republican dominance, and even then, some Democrats have managed to retain their seats.  While states such as Georgia appear to have a fair system, opening redistricting to a solely legislative process opens the opportunity for abuse.
 
-  \section{Discussion}
+  \section{Discussion}\label{s:discussion}
   \subsection{Usefulness of Different Metrics}
   \subsubsection{Compactness Metrics}
   As measures for gerrymandering, none of the measures of compactness alone is a perfect measure.  In each case, there were some states that scored poorly on a compactness metric, but for which there was no evidence of partisan gerrymandering.  It is possible that in these cases there was a bipartisan gerrymander, or a gerrymander which did not happen to cause many wasted votes in the election we considered; our data are insufficient to decide.  In addition, our data cannot show a causal relationship.  In particular, while gerrymandering may cause noncompact districts, it could also be the case that states which tend to draw heavily gerrymandered districts also tend to draw noncompact districts.  However, the presence of noncompact districts does seem to generally indicate that there may be gerrymandering, and conversely states with compact districts tended to have low partisan bias.
@@ -251,7 +251,7 @@ With the aforementioned data considered, several states do not observe the same 
 
   Of course, ideally plans would not make it to the level of being invalidated by a court.  While incorporating partisan bias metrics into law would be difficult since they require real election data, compactness metrics could be integrated into the redistricting process.  Better yet, we suggest that states revise their policy on allowing state legislatures to draw lines independently.  Nonpartisan and balanced partisan processes create fair, consensus plans, as they will require agreements that prevent the parties from simply passing a partisan bill designed to reduce the prevalence of partisan gerrymandering.
 
-  \section{Conclusion}
+  \section{Conclusion}\label{s:conclusion}
   Partisan gerrymandering damages the fundamental nature of our representative democracy.  It produces unfair advantages that prevent citizens from being represented fairly.  Real redistricting is too complex for a single simple metric to be able to quantify all types of gerrymandering, but by combining multiple metrics, it is possible to catch a number of different types of gerrymanders in a specific and quantifiable way.  Using quantifiable metrics of partisan gerrymandering, we hope to create a standard that can delineate results that are blatantly biased, regardless of any ability to discover the intent of those who created the plans.
 
 
